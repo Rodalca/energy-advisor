@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Advisor | Inteligência Energética e Sustentabilidade</title>
+    <!-- SEO & Metadados -->
+    <meta name="description" content="Plataforma de inteligência de dados para eficiência energética, energia solar, Mercado Livre de Energia e sistemas BESS.">
+    
+    <!-- Tipografia Premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Ícones Modernos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Folha de Estilo Reestilizada -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Bibliotecas Core (Vue 3 via CDN & Chart.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        
+        <!-- HEADER CORPORATIVO FIXO -->
+        <header class="main-header">
+            <div class="container header-container">
+                <a href="#inicio" class="logo">
+                    <div class="logo-icon"><i class="fa-solid fa-chart-network"></i></div>
+                    <span>Energy</span>Advisor
+                </a>
+                
+                <!-- Menu de Navegação Desktop -->
+                <nav class="nav-menu" :class="{'nav-active': mobileMenuOpen}">
+                    <a href="#inicio" @click="closeMenu">Início</a>
+                    <a href="#solucoes" @click="closeMenu">Soluções</a>
+                    <a href="#simulacao" @click="closeMenu">Simulações</a>
+                    <a href="#beneficios" @click="closeMenu">Benefícios</a>
+                    <a href="#sobre" @click="closeMenu">Sobre</a>
+                    <a href="#contato" @click="closeMenu">Contato</a>
+                    <a href="#simulacao" class="btn btn-secondary btn-nav" @click="closeMenu">Solicitar Diagnóstico</a>
+                </nav>
+                
+                <!-- Gatilho do Menu Mobile -->
+                <button class="mobile-menu-toggle" @click="toggleMobileMenu" :aria-label="mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'">
+                    <i class="fa-solid" :class="mobileMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- HERO SECTION PREMIUM -->
+            <section id="inicio" class="hero-section">
+                <div class="container hero-container">
+                    <div class="hero-content">
+                        <span class="badge-tech"><i class="fa-solid fa-microchip"></i> Inteligência de Dados aplicada à Energia</span>
+                        <h1>Transforme sua conta de energia em <span>oportunidades de economia</span></h1>
+                        <p>Analisamos minuciosamente suas faturas do Grupo A para identificar gargalos operacionais e viabilizar projetos em eficiência, energia solar, Mercado Livre e armazenamento BESS[cite: 1].</p>
+                        <div class="hero-actions">
+                            <a href="#simulacao" class="btn btn-primary"><i class="fa-solid fa-calculator"></i> Iniciar Diagnóstico</a>
+                            <a href="#contato" class="btn btn-outline">Falar com Especialista</a>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-image-wrapper">
+                        <!-- Mockup Avançado de UI do Dashboard -->
+                        <div class="hero-dashboard-mockup">
+                            <div class="mockup-header">
+                                <div class="mockup-dots">
+                                    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                                </div>
+                                <span class="mockup-title"><i class="fa-solid fa-lock"></i> energyadvisor.com.br/dashboard</span>
+                            </div>
+                            <div class="mockup-body">
+                                <div class="mockup-stats-grid">
+                                    <div class="m-stat-card">
+                                        <small>Eficiência Global</small>
+                                        <strong>94.2%</strong>
+                                    </div>
+                                    <div class="m-stat-card">
+                                        <small>Economia Identificada</small>
+                                        <strong class="text-green">R$ 14,2k/ano</strong>
+                                    </div>
+                                </div>
+                                <div class="mockup-chart-container">
+                                    <div class="mockup-bar" style="height: 45%"></div>
+                                    <div class="mockup-bar" style="height: 70%"></div>
+                                    <div class="mockup-bar" style="height: 55%"></div>
+                                    <div class="mockup-bar active-bar" style="height: 90%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO DE SOLUÇÕES (CARDS MODERNOS) -->
+            <section id="solucoes" class="section-padding bg-light">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle">O Que Fazemos</span>
+                        <h2>Nossas Soluções Inteligentes</h2>
+                        <p>Engenharia de ponta combinada com análise estatística avançada para blindar a matriz de custos da sua operação[cite: 1].</p>
+                    </div>
+                    
+                    <div class="grid-services">
+                        <!-- Card 1 -->
+                        <div class="service-card">
+                            <div class="icon-box"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                            <h3>Análise de Faturas</h3>
+                            <p>Auditoria profunda para identificar cobranças indevidas, tarifas inadequadas e aplicação de multas contratuais[cite: 1].</p>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="service-card">
+                            <div class="icon-box"><i class="fa-solid fa-solar-panel"></i></div>
+                            <h3>Energia Solar</h3>
+                            <p>Estudo de engenharia preliminar, dimensionamento técnico de arranjos fotovoltaicos e cálculo exato de payback[cite: 1].</p>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="service-card">
+                            <div class="icon-box"><i class="fa-solid fa-bolt-lightning"></i></div>
+                            <h3>Mercado Livre de Energia</h3>
+                            <p>Análise de elegibilidade técnica para migração ao ACL, mitigando riscos na contratação direta de energia[cite: 1].</p>
+                        </div>
+                        <!-- Card 4 -->
+                        <div class="service-card">
+                            <div class="icon-box"><i class="fa-solid fa-battery-three-quarters"></i></div>
+                            <h3>Sistemas BESS (Baterias)</h3>
+                            <p>Modelagem de armazenamento inteligente para redução de demanda no horário de ponta (peak shaving) e resiliência[cite: 1].</p>
+                        </div>
+                        <!-- Card 5 -->
+                        <div class="service-card">
+                            <div class="icon-box"><i class="fa-solid fa-chart-line-up"></i></div>
+                            <h3>Fator de Potência</h3>
+                            <p>Eliminação definitiva de cobranças de energia reativa excedente por meio do dimensionamento de bancos de capacitores[cite: 1].</p>
+                        </div>
+                        <!-- Card 6 -->
+                        <div class="service-card">
+                            <div class="icon-box"><i class="fa-solid fa-industry"></i></div>
+                            <h3>Gestão Energética</h3>
+                            <p>Monitoramento contínuo, relatórios de performance e previsibilidade orçamentária de insumos sob demanda[cite: 1].</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO DE DIAGNÓSTICO INTERATIVO (DASHBOARD COMPLETO) -->
+            <section id="simulacao" class="section-padding">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle">Simulador Automatizado</span>
+                        <h2>Diagnóstico Energético Corporativo</h2>
+                        <p>Entre com os parâmetros regulados da sua última fatura comercial/industrial para renderizar a inteligência.</p>
+                    </div>
+
+                    <div class="simulation-wrapper">
+                        <!-- Formulário Técnico Otimizado -->
+                        <div class="card-wrapper form-panel">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-sliders text-green"></i> Parâmetros da Planta</h3>
+                            </div>
+                            <form @submit.prevent="executarAnalise" class="premium-form">
+                                <div class="form-group">
+                                    <label for="empresa">Razão Social ou Organização</label>
+                                    <div class="input-icon-group">
+                                        <i class="fa-solid fa-building input-icon"></i>
+                                        <input type="text" id="empresa" v-model="form.empresa" placeholder="Ex: Indústrias Alfa S.A." required>
+                                    </div>
+                                </div>
+                                <div class="grid-2-col">
+                                    <div class="form-group">
+                                        <label for="consumo">Consumo Mensal (kWh)</label>
+                                        <input type="number" id="consumo" v-model.number="form.consumo" min="1" placeholder="Ex: 4500" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="valorFatura">Custo Total da Fatura (R$)</label>
+                                        <input type="number" id="valorFatura" v-model.number="form.valorFatura" min="1" placeholder="Ex: 12500" required>
+                                    </div>
+                                </div>
+                                <div class="grid-2-col">
+                                    <div class="form-group">
+                                        <label for="demandaContratada">Demanda Contratada (kW)</label>
+                                        <input type="number" id="demandaContratada" v-model.number="form.demandaContratada" min="1" placeholder="Ex: 150" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="demandaMedida">Demanda Medida (kW)</label>
+                                        <input type="number" id="demandaMedida" v-model.number="form.demandaMedida" min="1" placeholder="Ex: 165" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="multaReativo">Penalidade por Energia Reativa / Baixo Fator de Potência?</label>
+                                    <select id="multaReativo" v-model="form.multaReativo" class="premium-select">
+                                        <option :value="false">Não consta ou Sem Multas</option>
+                                        <option :value="true">Sim, consta cobrança de reativos</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block btn-icon-center">
+                                    <span>Processar Diagnóstico de Dados</span> <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Dashboard de Resultados Dinâmicos -->
+                        <div class="card-wrapper results-panel" :class="{'panel-active': analiseExecutada}">
+                            <div v-if="analiseExecutada">
+                                <div class="results-header">
+                                    <div class="results-title-group">
+                                        <h3><i class="fa-solid fa-analytics text-green"></i> Insights Identificados</h3>
+                                        <span class="company-badge">{{ form.empresa }}</span>
+                                    </div>
+                                    <button class="btn btn-outline btn-sm" @click="imprimirResultado"><i class="fa-solid fa-print"></i> Exportar</button>
+                                </div>
+
+                                <!-- Grid de Indicadores Sintéticos -->
+                                <div class="grid-2-col dashboard-summary">
+                                    <div class="summary-box">
+                                        <span>Fator de Carga Estimado</span>
+                                        <strong class="summary-value">{{ calcularFatorCarga }}%</strong>
+                                    </div>
+                                    <div class="summary-box alert-box">
+                                        <span>Alertas Mapeados</span>
+                                        <strong class="summary-value text-green">{{ recomendacoes.length }} Oportunidades</strong>
+                                    </div>
+                                </div>
+
+                                <!-- Feed de Recomendações Regulatórias -->
+                                <div class="recommendations-list">
+                                    <div v-for="(rec, idx) in recomendacoes" :key="idx" class="rec-item" :class="rec.tipo">
+                                        <div class="rec-icon"><i class="fa-solid" :class="rec.icon"></i></div>
+                                        <div class="rec-text">
+                                            <h5>{{ rec.titulo }}</h5>
+                                            <p>{{ rec.descricao }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Gráfico Avançado Injetado pelo Chart.js -->
+                                <div class="chart-container-wrapper">
+                                    <canvas id="chartAnalise"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Estado Inicial Neutro (UX Placeholder) -->
+                            <div class="empty-state" v-else>
+                                <div class="pulse-icon"><i class="fa-solid fa-chart-line"></i></div>
+                                <h3>Pronto para Processamento</h3>
+                                <p>Preencha a matriz de dados ao lado para simular o comportamento regulatório e as curvas econômicas da sua fatura.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COMO FUNCIONA (TIMELINE MINIMALISTA) -->
+            <section id="funcionamento" class="section-padding bg-light">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle">Metodologia</span>
+                        <h2>Como Funciona a Plataforma?</h2>
+                        <p>Transformamos a complexidade das normas do setor elétrico em decisões gerenciais simplificadas.</p>
+                    </div>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-badge">01</div>
+                            <div class="timeline-panel">
+                                <h4>Inserção de Dados</h4>
+                                <p>Você insere os dados chaves ou disponibiliza o histórico consolidado de consumo da unidade.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-badge">02</div>
+                            <div class="timeline-panel">
+                                <h4>Cruzamento de Variáveis</h4>
+                                <p>Nossa engine processa as regras de enquadramento vigentes e identifica os gargalos técnicos.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-badge">03</div>
+                            <div class="timeline-panel">
+                                <h4>Geração do Relatório</h4>
+                                <p>Visualização instantânea dos indicadores de eficiência energética e demandas contratadas.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-badge">04</div>
+                            <div class="timeline-panel">
+                                <h4>Plano de Ação</h4>
+                                <p>Mapeamento claro das soluções de engenharia necessárias para eliminar multas e perdas.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-badge">05</div>
+                            <div class="timeline-panel">
+                                <h4>Validação Técnica</h4>
+                                <p>Conexão direta com corpo de engenharia qualificado para implementação física das melhorias.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO DE BENEFÍCIOS -->
+            <section id="beneficios" class="section-padding">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle">Vantagens</span>
+                        <h2>Por Que a Energy Advisor?</h2>
+                        <p>Combinamos conformidade regulatória rigorosa com uma interface focada em resultados ágeis.</p>
+                    </div>
+                    
+                    <div class="grid-benefits">
+                        <div class="benefit-card">
+                            <div class="b-icon"><i class="fa-solid fa-vault"></i></div>
+                            <h4>Redução de Custos</h4>
+                            <p>Corte cirúrgico de ineficiências tarifárias invisíveis que drenam seu capital de giro.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="b-icon"><i class="fa-solid fa-seedling"></i></div>
+                            <h4>Sustentabilidade (ESG)</h4>
+                            <p>Apoio guiado na transição para fontes renováveis e matrizes limpas certificadas.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="b-icon"><i class="fa-solid fa-gauge-circle-bolt"></i></div>
+                            <h4>Diagnóstico Veloz</h4>
+                            <p>Substitua diagnósticos analógicos lentos por insights de dados em tempo real.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="b-icon"><i class="fa-solid fa-binary"></i></div>
+                            <h4>Decisões Data-Driven</h4>
+                            <p>Troque suposições operacionais por certezas matemáticas e estatísticas sólidas.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="b-icon"><i class="fa-solid fa-chart-network"></i></div>
+                            <h4>Gestão Unificada</h4>
+                            <p>Controle absoluto e visibilidade das variáveis críticas de consumo da empresa.</p>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="b-icon"><i class="fa-solid fa-user-check"></i></div>
+                            <h4>Apoio Especializado</h4>
+                            <p>Segurança técnica amparada pelas melhores práticas do setor corporativo de energia.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DATA PRESETS / RESULTADOS CORPORATIVOS -->
+            <section class="section-padding bg-dark text-white text-center counter-section">
+                <div class="container grid-results">
+                    <div class="result-item">
+                        <span class="result-number">+15%</span>
+                        <p class="result-label">Economia Média Mapeada</p>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-number">+500</span>
+                        <p class="result-label">Faturas Auditadas</p>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-number">+120</span>
+                        <p class="result-label">Projetos Executados</p>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-number">2 GWh</span>
+                        <p class="result-label">Energia Otimizada</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DEPOIMENTOS DE CLIENTES -->
+            <section id="sobre" class="section-padding bg-light">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle">Casos de Sucesso</span>
+                        <h2>Quem Confia na Nossa Inteligência</h2>
+                        <p>Resultados auditados por gestores que otimizaram suas estruturas orçamentárias.</p>
+                    </div>
+                    
+                    <div class="grid-testimonials">
+                        <div class="testimonial-card">
+                            <div class="t-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                            <p class="quote">"O diagnóstico identificou um erro de enquadramento e uma cobrança de reativo severa. Eliminamos o problema em menos de 30 dias."</p>
+                            <div class="user-info">
+                                <strong>Marcos Roberto</strong>
+                                <span>Gerente de Engenharia • Metalúrgica Sul</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-card">
+                            <div class="t-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                            <p class="quote">"A simulação nos deu métricas exatas sobre o payback da nossa usina fotovoltaica. A precisão técnica foi o diferencial para aprovação da diretoria."</p>
+                            <div class="user-info">
+                                <strong>Cláudia Souza</strong>
+                                <span>Diretora ESG • Rede Alvorada</span>
+                            </div>
+                        </div>
+                        <div class="testimonial-card">
+                            <div class="t-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                            <p class="quote">"Migrar para o Mercado Livre de Energia parecia burocrático, mas a triagem de elegibilidade da plataforma nos trouxe total clareza regulatória."</p>
+                            <div class="user-info">
+                                <strong>Ricardo Mendes</strong>
+                                <span>CFO • Logística Integrada SA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CALL TO ACTION IMPULSIONADOR -->
+            <section class="cta-section text-center text-white">
+                <div class="container cta-container">
+                    <h2>Descubra o potencial oculto de economia da sua empresa</h2>
+                    <p>Pare de pagar multas técnicas por pura falta de visibilidade de dados operacionais.</p>
+                    <a href="#simulacao" class="btn btn-secondary btn-lg pulse-button">Solicitar Diagnóstico Gratuito</a>
+                </div>
+            </section>
+
+            <!-- CONTATO INSTITUCIONAL -->
+            <section id="contato" class="section-padding">
+                <div class="container grid-2-col">
+                    <div class="contact-text-panel">
+                        <span class="section-subtitle">Canais Diretos</span>
+                        <h3>Fale Conosco</h3>
+                        <p>Agende uma reunião técnica com nossos engenheiros consultores parceiros para estruturar um plano corporativo customizado.</p>
+                        
+                        <div class="contact-details">
+                            <div class="c-detail-item">
+                                <div class="c-icon"><i class="fa-solid fa-envelope"></i></div>
+                                <div>
+                                    <small>E-mail Corporativo</small>
+                                    <p>contato@energyadvisor.com.br</p>
+                                </div>
+                            </div>
+                            <div class="c-detail-item">
+                                <div class="c-icon"><i class="fa-solid fa-phone"></i></div>
+                                <div>
+                                    <small>Central de Atendimento</small>
+                                    <p>(67) 99801-0214</p>
+                                </div>
+                            </div>
+                            <div class="c-detail-item">
+                                <div class="c-icon"><i class="fa-solid fa-location-dot"></i></div>
+                                <div>
+                                    <small>Sede Presencial</small>
+                                    <p>Rua Trindade, 581 — Campo Grande / MS</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-wrapper form-panel">
+                        <form @submit.prevent="enviarContato" class="premium-form">
+                            <div class="form-group">
+                                <label for="c_nome">Nome Completo</label>
+                                <input type="text" id="c_nome" placeholder="Ex: Roberto Silva" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="c_email">E-mail de Trabalho</label>
+                                <input type="email" id="c_email" placeholder="roberto@suaempresa.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="c_msg">Contexto do seu Negócio</label>
+                                <textarea id="c_msg" rows="4" placeholder="Descreva brevemente suas principais dores com insumos energéticos..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Agendar Alinhamento Técnico</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- RODAPÉ EXECUTIVO -->
+        <footer class="main-footer">
+            <div class="container footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo text-white">
+                        <div class="logo-icon"><i class="fa-solid fa-chart-network"></i></div>
+                        <span>Energy</span>Advisor
+                    </a>
+                    <p>Plataforma inteligente corporativa dedicada à eficiência tarifária, conformidade regulatória e transição energética orientada a dados.</p>
+                </div>
+                <div class="footer-links">
+                    <h5>Navegação</h5>
+                    <ul>
+                        <li><a href="#inicio">Início</a></li>
+                        <li><a href="#solucoes">Soluções</a></li>
+                        <li><a href="#simulacao">Simulador de Faturas</a></li>
+                        <li><a href="#beneficios">Benefícios Corporativos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-socials">
+                    <h5>Conectividade</h5>
+                    <div class="social-wrapper">
+                        <a href="#" aria-label="Acessar Linkedin"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="Acessar Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="Acessar Youtube"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Energy Advisor. Todos os direitos reservados.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Script de Regras de Negócio e Renderização -->
+    <script src="script.js"></script>
+</body>
+</html>
