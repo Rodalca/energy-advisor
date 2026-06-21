@@ -42,6 +42,13 @@
                     <a href="#sobre" @click="closeMenu">Sobre</a>
                     <a href="#contato" @click="closeMenu">Contato</a>
                     <a href="#simulacao" class="btn btn-secondary btn-nav" @click="closeMenu">Solicitar Diagnóstico</a>
+                    <a href="login.html" class="btn btn-primary btn-nav"> 
+                      <i class="fa-solid fa-user"></i>
+                      Login
+                    </a>
+                    <a href="#" v-if="usuarioLogado" @click="logout">
+                      Sair
+                    </a>
                 </nav>
                 
                 <!-- Gatilho do Menu Mobile -->
@@ -58,7 +65,7 @@
                     <div class="hero-content">
                         <span class="badge-tech"><i class="fa-solid fa-microchip"></i> Inteligência de Dados aplicada à Energia</span>
                         <h1>Transforme sua conta de energia em <span>oportunidades de economia</span></h1>
-                        <p>Analisamos minuciosamente suas faturas do Grupo A para identificar gargalos operacionais e viabilizar projetos em eficiência, energia solar, Mercado Livre e armazenamento BESS[cite: 1].</p>
+                        <p>Analisamos minuciosamente suas faturas do Grupo A para identificar gargalos operacionais e viabilizar projetos em eficiência, energia solar, Mercado Livre e armazenamento BESS.</p>
                         <div class="hero-actions">
                             <a href="#simulacao" class="btn btn-primary"><i class="fa-solid fa-calculator"></i> Iniciar Diagnóstico</a>
                             <a href="#contato" class="btn btn-outline">Falar com Especialista</a>
@@ -96,14 +103,35 @@
                     </div>
                 </div>
             </section>
+            <section v-if="!usuarioLogado"   class="section-padding">
+                <div class="container">
+                  <div class="card-wrapper" style="padding:50px;text-align:center;">
+                    <h2>Acesso Restrito</h2>
+                    <p> Faça login para acessar: </p>
+                    <br>
+                      <ul style="list-style:none">
+                      <li>✔ Simulações Energéticas</li>
+                      <li>✔ Mercado Livre</li>
+                      <li>✔ Energia Solar</li>
+                      <li>✔ BESS</li>
+                      <li>✔ Relatórios Técnicos</li>
+                      </ul>
+                    <br>
+                    <a href="login.html" class="btn btn-primary">
+                      Entrar
+                    </a>
+                  </div>
+                </div>
+            </section>
+
 
             <!-- SEÇÃO DE SOLUÇÕES (CARDS MODERNOS) -->
-            <section id="solucoes" class="section-padding bg-light">
+            <section id="solucoes" class="section-padding bg-light" v-if="usuarioLogado">
                 <div class="container">
                     <div class="section-header">
                         <span class="section-subtitle">O Que Fazemos</span>
                         <h2>Nossas Soluções Inteligentes</h2>
-                        <p>Engenharia de ponta combinada com análise estatística avançada para blindar a matriz de custos da sua operação[cite: 1].</p>
+                        <p>Engenharia de ponta combinada com análise estatística avançada para blindar a matriz de custos da sua operação.</p>
                     </div>
                     
                     <div class="grid-services">
@@ -111,44 +139,44 @@
                         <div class="service-card">
                             <div class="icon-box"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                             <h3>Análise de Faturas</h3>
-                            <p>Auditoria profunda para identificar cobranças indevidas, tarifas inadequadas e aplicação de multas contratuais[cite: 1].</p>
+                            <p>Auditoria profunda para identificar cobranças indevidas, tarifas inadequadas e aplicação de multas contratuais.</p>
                         </div>
                         <!-- Card 2 -->
                         <div class="service-card">
                             <div class="icon-box"><i class="fa-solid fa-solar-panel"></i></div>
                             <h3>Energia Solar</h3>
-                            <p>Estudo de engenharia preliminar, dimensionamento técnico de arranjos fotovoltaicos e cálculo exato de payback[cite: 1].</p>
+                            <p>Estudo de engenharia preliminar, dimensionamento técnico de arranjos fotovoltaicos e cálculo exato de payback.</p>
                         </div>
                         <!-- Card 3 -->
                         <div class="service-card">
                             <div class="icon-box"><i class="fa-solid fa-bolt-lightning"></i></div>
                             <h3>Mercado Livre de Energia</h3>
-                            <p>Análise de elegibilidade técnica para migração ao ACL, mitigando riscos na contratação direta de energia[cite: 1].</p>
+                            <p>Análise de elegibilidade técnica para migração ao ACL, mitigando riscos na contratação direta de energia.</p>
                         </div>
                         <!-- Card 4 -->
                         <div class="service-card">
                             <div class="icon-box"><i class="fa-solid fa-battery-three-quarters"></i></div>
                             <h3>Sistemas BESS (Baterias)</h3>
-                            <p>Modelagem de armazenamento inteligente para redução de demanda no horário de ponta (peak shaving) e resiliência[cite: 1].</p>
+                            <p>Modelagem de armazenamento inteligente para redução de demanda no horário de ponta (peak shaving) e resiliência.</p>
                         </div>
                         <!-- Card 5 -->
                         <div class="service-card">
                             <div class="icon-box"><i class="fa-solid fa-chart-line-up"></i></div>
                             <h3>Fator de Potência</h3>
-                            <p>Eliminação definitiva de cobranças de energia reativa excedente por meio do dimensionamento de bancos de capacitores[cite: 1].</p>
+                            <p>Eliminação definitiva de cobranças de energia reativa excedente por meio do dimensionamento de bancos de capacitores.</p>
                         </div>
                         <!-- Card 6 -->
                         <div class="service-card">
                             <div class="icon-box"><i class="fa-solid fa-industry"></i></div>
                             <h3>Gestão Energética</h3>
-                            <p>Monitoramento contínuo, relatórios de performance e previsibilidade orçamentária de insumos sob demanda[cite: 1].</p>
+                            <p>Monitoramento contínuo, relatórios de performance e previsibilidade orçamentária de insumos sob demanda.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- SEÇÃO DE DIAGNÓSTICO INTERATIVO (DASHBOARD COMPLETO) -->
-            <section id="simulacao" class="section-padding">
+            <section id="simulacao" class="section-padding" v-if="usuarioLogado">
                 <div class="container">
                     <div class="section-header">
                         <span class="section-subtitle">Simulador Automatizado</span>
@@ -255,7 +283,7 @@
             </section>
 
             <!-- COMO FUNCIONA (TIMELINE MINIMALISTA) -->
-            <section id="funcionamento" class="section-padding bg-light">
+            <section id="funcionamento" class="section-padding bg-light" v-if="usuarioLogado">
                 <div class="container">
                     <div class="section-header">
                         <span class="section-subtitle">Metodologia</span>
@@ -304,7 +332,7 @@
             </section>
 
             <!-- SEÇÃO DE BENEFÍCIOS -->
-            <section id="beneficios" class="section-padding">
+            <section id="beneficios" class="section-padding" v-if="usuarioLogado">
                 <div class="container">
                     <div class="section-header">
                         <span class="section-subtitle">Vantagens</span>

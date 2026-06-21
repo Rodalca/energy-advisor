@@ -5,6 +5,9 @@
  */
 
 const { createApp, ref, computed, nextTick } = Vue;
+const usuarioLogado =localStorage.getItem("logado");
+const logout = () => {localStorage.removeItem("logado");
+  location.reload(); }
 
 createApp({
     setup() {
@@ -187,6 +190,8 @@ createApp({
             executarAnalise,
             imprimirResultado,
             enviarContato
+            usuarioLogado,
+            logout
         };
     }
 }).mount('#app');
