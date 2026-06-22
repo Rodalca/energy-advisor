@@ -1,104 +1,75 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Login - Energy Advisor</title>
-
-<link rel="stylesheet" href="style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Energy Advisor</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
-
 <header class="main-header">
     <div class="container header-container">
         <a href="index.html" class="logo">
-            <div class="logo-icon">
-                <i class="fa-solid fa-chart-network"></i>
-            </div>
+            <div class="logo-icon"><i class="fa-solid fa-chart-network"></i></div>
             <span>Energy</span>Advisor
         </a>
     </div>
 </header>
-
 <section class="hero-section">
     <div class="container">
-
-        <div class="card-wrapper"
-        style="max-width:500px;margin:auto;padding:40px;">
-
+        <div class="card-wrapper login-card">
             <h2>Área Restrita</h2>
-
-            <p>
-                Entre para acessar os serviços e simuladores.
-            </p>
-
-            <br>
-
-            <form id="loginForm">
-
+            <p>Entre com um usuário cadastrado na tabela <strong>usuarios</strong> do Supabase.</p>
+            <form id="loginForm" class="premium-form login-form">
                 <div class="form-group">
-
-                    <label>E-mail</label>
-
-                    <input
-                    type="email"
-                    id="email"
-                    required>
-
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" required placeholder="usuario@email.com">
                 </div>
-
-                <br>
-
                 <div class="form-group">
-
-                    <label>Senha</label>
-
-                    <input
-                    type="password"
-                    id="senha"
-                    required>
-
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" required placeholder="Digite sua senha">
                 </div>
-
-                <br>
-
-                <button
-                type="submit"
-                class="btn btn-primary btn-block">
-
-                    Entrar
-
-                </button>
-
+                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
             </form>
-
+            <p class="login-observacao">O sistema procura o e-mail e a senha no banco e, se encontrar, carrega o nome no cabeçalho.</p>
         </div>
-
     </div>
 </section>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = "https://qbfosnuwrqbjwbolmopj.supabase.co";
+const SUPABASE_KEY = "sb_publishable_w76Z2U0x9epJ4XsxkQGQdg_lbAVlmHx";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-document
-.getElementById("loginForm")
-.addEventListener("submit", function(e){
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha").value.trim();
 
-e.preventDefault();
+    const { data, error } = await supabaseClient
+        .from("usuarios")
+        .select("id_usuario, nome, email")
+        .eq("email", email)
+        .eq("senha", senha)
+        .maybeSingle();
 
-localStorage.setItem("logado","true");
+    if (error) {
+        console.error("Erro no login:", error);
+        alert("Erro ao consultar o banco de dados.");
+        return;
+    }
+    if (!data) {
+        alert("Usuário não encontrado ou senha incorreta.");
+        return;
+    }
 
-window.location.href="index.html";
-
+    localStorage.setItem("logado", "true");
+    localStorage.setItem("usuarioAtual", JSON.stringify(data));
+    localStorage.removeItem("empresaAtual");
+    window.location.href = "index.html";
 });
-
 </script>
-
 </body>
 </html>

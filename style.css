@@ -208,6 +208,41 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--primary-color);
     cursor: pointer;
 }
+/* =====================================================
+   USUÁRIO LOGADO
+===================================================== */
+
+.usuario-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: rgba(25, 135, 84, 0.08);
+    border: 1px solid rgba(25, 135, 84, 0.15);
+}
+
+.usuario-menu i {
+    font-size: 2rem;
+    color: #198754;
+}
+
+.usuario-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.usuario-nome {
+    font-weight: 700;
+    color: #0F3B66;
+    font-size: 0.95rem;
+}
+
+.usuario-empresa {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
 
 /* ==========================================================================
    HERO SECTION COESIVA
@@ -503,66 +538,22 @@ h1, h2, h3, h4, h5, h6 {
     .btn-nav { width: 100%; text-align: center; justify-content: center; }
 }
 
-/* ==========================================================================
-   MÓDULO 3 - BANCO DE DADOS: HISTÓRICO E STATUS DE PERSISTÊNCIA
-   ========================================================================== */
-.db-online {
-    background-color: rgba(25, 135, 84, 0.10);
-    color: var(--secondary-color);
-}
+.acesso-card{padding:50px;text-align:center}.fluxo-acesso{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:30px 0}.fluxo-item{background:var(--light-bg);border:1px solid var(--border-color);border-radius:var(--radius);padding:20px}.fluxo-item strong{display:inline-flex;width:34px;height:34px;align-items:center;justify-content:center;background:var(--primary-color);color:#fff;border-radius:50%;margin-bottom:10px}.fluxo-item span{display:block;font-family:'Montserrat',sans-serif;font-weight:600;color:var(--primary-color)}.steps-wrapper{display:flex;justify-content:center;gap:24px;margin-bottom:40px;flex-wrap:wrap}.step-item{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border-color);border-radius:999px;padding:10px 20px;color:#64748B;box-shadow:var(--shadow-sm)}.step-item span{width:30px;height:30px;border-radius:50%;background:#E2E8F0;color:var(--primary-color);display:flex;align-items:center;justify-content:center;font-weight:700}.step-item.active{border-color:var(--secondary-color);color:var(--secondary-color)}.step-item.active span,.step-item.done span{background:var(--secondary-color);color:#fff}.cadastro-card{max-width:800px;margin:0 auto}.panel-subtitle{color:#64748B;margin-top:6px}.db-online{background-color:rgba(25,135,84,.10);color:var(--secondary-color)}.db-offline{background-color:rgba(245,158,11,.10);color:var(--warning)}.historico-wrapper{margin-top:32px;padding-top:24px;border-top:1px solid var(--border-color)}.historico-header{margin-bottom:16px;padding-bottom:12px}.tabela-responsiva{width:100%;overflow-x:auto}.historico-table{width:100%;border-collapse:collapse;font-size:.9rem}.historico-table th,.historico-table td{padding:12px;border-bottom:1px solid var(--border-color);text-align:left;white-space:nowrap}.historico-table th{background:var(--light-bg);color:var(--primary-color);font-family:'Montserrat',sans-serif;font-size:.8rem;text-transform:uppercase}.historico-vazio{background:var(--light-bg);border:1px dashed var(--border-color);border-radius:var(--radius);padding:18px;color:#64748B;text-align:center}.login-card{max-width:520px;margin:auto;padding:40px}.login-form{padding-left:0;padding-right:0}.login-observacao{margin-top:20px;font-size:.9rem;color:#64748B}@media(max-width:768px){.fluxo-acesso{grid-template-columns:1fr}.acesso-card{padding:30px}}
 
-.db-offline {
-    background-color: rgba(245, 158, 11, 0.10);
-    color: var(--warning);
-}
 
-.historico-wrapper {
-    margin-top: 32px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border-color);
+/* =====================================================
+   AJUSTE FINAL - USUÁRIO LOGADO NO CABEÇALHO
+===================================================== */
+.usuario-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: rgba(25, 135, 84, 0.08);
+    border: 1px solid rgba(25, 135, 84, 0.15);
 }
-
-.historico-header {
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-}
-
-.tabela-responsiva {
-    width: 100%;
-    overflow-x: auto;
-}
-
-.historico-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-}
-
-.historico-table th,
-.historico-table td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border-color);
-    text-align: left;
-    white-space: nowrap;
-}
-
-.historico-table th {
-    background-color: var(--light-bg);
-    color: var(--primary-color);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-}
-
-.historico-table tr:hover {
-    background-color: #F8FAFC;
-}
-
-.historico-vazio {
-    background: var(--light-bg);
-    border: 1px dashed var(--border-color);
-    border-radius: var(--radius);
-    padding: 18px;
-    color: #64748B;
-    text-align: center;
-}
+.usuario-menu i { font-size: 2rem; color: #198754; }
+.usuario-info { display: flex; flex-direction: column; }
+.usuario-nome { font-weight: 700; color: #0F3B66; font-size: 0.95rem; }
+.usuario-empresa { font-size: 0.75rem; color: #6c757d; }

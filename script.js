@@ -1,354 +1,248 @@
-/**
- * Energy Advisor - Lógica do Front-End (Vue.js 3 + Chart.js + Supabase)
- * Aluno: Rodrigo Alcântara
- * Disciplina: Projeto Integrador em Tecnologia da Informação II
- *
- * Módulo 3:
- * - Integração com banco de dados PostgreSQL via Supabase
- * - Manipulação de dados: inserção e consulta
- * - Fallback em localStorage caso as credenciais do Supabase ainda não estejam configuradas
- */
-
+/** Energy Advisor - Login com Supabase + cadastro de empresa + análise */
 const { createApp, ref, computed, nextTick, onMounted } = Vue;
 
-/* ==========================================================================
-   CONFIGURAÇÃO DO SUPABASE
-   ========================================================================== 
-   1. Crie um projeto em https://supabase.com
-   2. Vá em Project Settings > API
-   3. Copie Project URL e anon public key
-   4. Cole nos campos abaixo
-*/
-const SUPABASE_URL = "COLE_AQUI_SUA_URL_DO_SUPABASE";
-const SUPABASE_KEY = "COLE_AQUI_SUA_ANON_KEY_DO_SUPABASE";
-
-const supabaseConfigurado =
-    SUPABASE_URL !== "COLE_AQUI_SUA_URL_DO_SUPABASE" &&
-    SUPABASE_KEY !== "COLE_AQUI_SUA_ANON_KEY_DO_SUPABASE" &&
-    window.supabase;
-
-const supabaseClient = supabaseConfigurado
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-    : null;
+const SUPABASE_URL = "https://qbfosnuwrqbjwbolmopj.supabase.co";
+const SUPABASE_KEY = "sb_publishable_w76Z2U0x9epJ4XsxkQGQdg_lbAVlmHx";
+const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 createApp({
     setup() {
-        // --- ESTADOS DA INTERFACE (UI) ---
         const mobileMenuOpen = ref(false);
-        const analiseExecutada = ref(false);
         const usuarioLogado = ref(localStorage.getItem("logado") === "true");
         const bancoConectado = ref(!!supabaseClient);
-        const historico = ref([]);
-
-        // --- FORMULÁRIO TÉCNICO ---
-        const form = ref({
-            empresa: '',
-            consumo: null,
-            valorFatura: null,
-            demandaContratada: null,
-            demandaMedida: null,
-            multaReativo: false
-        });
-
-        // --- ARMAZENAMENTO DE RECOMENDAÇÕES ---
+        const etapaAtual = ref("empresa");
+        const usuarioAtual = ref(JSON.parse(localStorage.getItem("usuarioAtual") || "null"));
+        const empresaAtual = ref(JSON.parse(localStorage.getItem("empresaAtual") || "null"));
+        const analiseExecutada = ref(false);
         const recomendacoes = ref([]);
+        const historico = ref([]);
         let chartInstance = null;
 
-        const statusBanco = computed(() => {
-            return bancoConectado.value
-                ? "Banco conectado"
-                : "Modo local";
-        });
+        const usuarioForm = ref({ nome: "", email: "", senha: "" });
+        const empresaForm = ref({ razao_social: "", cnpj: "", cidade: "", estado: "", grupo_tarifario: "Grupo A" });
+        const faturaForm = ref({ consumo: null, valorFatura: null, demandaContratada: null, demandaMedida: null, multaReativo: false });
 
-        const toggleMobileMenu = () => {
-            mobileMenuOpen.value = !mobileMenuOpen.value;
-        };
+        const statusBanco = computed(() => bancoConectado.value ? "Banco conectado" : "Modo local");
 
-        const closeMenu = () => {
-            mobileMenuOpen.value = false;
-        };
-
-        const logout = () => {
-            localStorage.removeItem("logado");
-            usuarioLogado.value = false;
-            closeMenu();
-            window.location.href = "index.html";
-        };
-
-        // --- CÁLCULO DE ENGENHARIA: FATOR DE CARGA ---
         const calcularFatorCarga = computed(() => {
-            if (!form.value.consumo || !form.value.demandaMedida) return 0;
-            const fc = (form.value.consumo / (form.value.demandaMedida * 730)) * 100;
+            if (!faturaForm.value.consumo || !faturaForm.value.demandaMedida) return 0;
+            const fc = (faturaForm.value.consumo / (faturaForm.value.demandaMedida * 730)) * 100;
             return Math.min(Math.round(fc), 100);
         });
 
-        // --- PROCESSAMENTO DAS REGRAS DE NEGÓCIO (MVP) ---
-        const executarAnalise = async () => {
-            recomendacoes.value = [];
+        const toggleMobileMenu = () => mobileMenuOpen.value = !mobileMenuOpen.value;
+        const closeMenu = () => mobileMenuOpen.value = false;
 
-            if (form.value.demandaContratada > (form.value.demandaMedida * 1.2)) {
-                recomendacoes.value.push({
-                    tipo: 'alerta',
-                    icon: 'fa-scale-down',
-                    titulo: 'Demanda Contratada Excessiva',
-                    descricao: 'A demanda contratada atual está subutilizada em relação à medida. Ajustar este contrato reduzirá o custo fixo mensal da fatura imediatamente.'
-                });
-            }
-
-            if (form.value.demandaMedida > form.value.demandaContratada) {
-                recomendacoes.value.push({
-                    tipo: 'perigo',
-                    icon: 'fa-triangle-exclamation',
-                    titulo: 'Risco Crítico: Ultrapassagem de Demanda',
-                    descricao: 'Sua planta ultrapassou o limite contratado. Isso gera multas pesadas com tarifas cobradas em dobro pela distribuidora local.'
-                });
-            }
-
-            if (form.value.multaReativo) {
-                recomendacoes.value.push({
-                    tipo: 'perigo',
-                    icon: 'fa-bolt',
-                    titulo: 'Penalidade por Excesso Reativo',
-                    descricao: 'Sua empresa está sendo penalizada por baixo fator de potência. Recomenda-se a implementação de um banco de capacitores automatizado.'
-                });
-            }
-
-            if (form.value.consumo > 1000) {
-                recomendacoes.value.push({
-                    tipo: 'sucesso',
-                    icon: 'fa-solar-panel',
-                    titulo: 'Alto Potencial para Energia Solar',
-                    descricao: 'Seu volume de consumo viabiliza a implantação de geração fotovoltaica própria, acelerando o retorno do investimento (payback).'
-                });
-            }
-
-            if (form.value.valorFatura > 5000) {
-                recomendacoes.value.push({
-                    tipo: 'sucesso',
-                    icon: 'fa-handshake',
-                    titulo: 'Elegível ao Mercado Livre (ACL)',
-                    descricao: 'O custo financeiro atual justifica a migração para o ambiente livre, permitindo negociar energia diretamente e reduzir custos.'
-                });
-            }
-
-            if (form.value.consumo > 3000 && form.value.valorFatura > 10000) {
-                recomendacoes.value.push({
-                    tipo: 'alerta',
-                    icon: 'fa-battery-full',
-                    titulo: 'Oportunidade para Sistema BESS',
-                    descricao: 'Recomendamos avaliar armazenamento em baterias para realizar Peak Shaving e melhorar a resiliência energética.'
-                });
-            }
-
-            if (recomendacoes.value.length === 0) {
-                recomendacoes.value.push({
-                    tipo: 'sucesso',
-                    icon: 'fa-square-check',
-                    titulo: 'Indicadores Técnicos Estáveis',
-                    descricao: 'Não detectamos inconformidades explícitas nesta fatura. Mantenha o monitoramento do histórico mês a mês.'
-                });
-            }
-
-            analiseExecutada.value = true;
-
-            await salvarAnalise();
-
-            nextTick(() => {
-                renderizarGraficoDashboard();
-            });
+        const logout = () => {
+            localStorage.removeItem("logado");
+            localStorage.removeItem("usuarioAtual");
+            localStorage.removeItem("empresaAtual");
+            localStorage.removeItem("historico_faturas");
+            usuarioLogado.value = false;
+            usuarioAtual.value = null;
+            empresaAtual.value = null;
+            etapaAtual.value = "empresa";
+            window.location.href = "index.html";
         };
 
-        // --- BANCO DE DADOS: INSERÇÃO DA FATURA E DIAGNÓSTICO ---
-        const salvarAnalise = async () => {
-            const registroFatura = {
-                empresa_nome: form.value.empresa,
-                consumo_kwh: form.value.consumo,
-                valor_fatura: form.value.valorFatura,
-                demanda_contratada: form.value.demandaContratada,
-                demanda_medida: form.value.demandaMedida,
-                multa_reativo: form.value.multaReativo
-            };
+        const carregarEmpresaDoUsuario = async () => {
+            if (!usuarioAtual.value || !supabaseClient) return;
+            const { data, error } = await supabaseClient
+                .from("empresas")
+                .select("*")
+                .eq("id_usuario", usuarioAtual.value.id_usuario)
+                .order("criado_em", { ascending: false })
+                .limit(1)
+                .maybeSingle();
+            if (error) {
+                console.error("Erro ao carregar empresa:", error);
+                return;
+            }
+            if (data) {
+                empresaAtual.value = data;
+                localStorage.setItem("empresaAtual", JSON.stringify(data));
+            }
+        };
 
-            const diagnostico = {
-                economia_estimada: calcularEconomiaEstimada(),
-                viavel_solar: form.value.consumo > 1000,
-                viavel_acl: form.value.valorFatura > 5000,
-                viavel_bess: form.value.consumo > 3000 && form.value.valorFatura > 10000
-            };
+        const definirEtapaInicial = async () => {
+            if (!usuarioLogado.value || !usuarioAtual.value) {
+                etapaAtual.value = "empresa";
+                return;
+            }
+            await carregarEmpresaDoUsuario();
+            if (empresaAtual.value) {
+                etapaAtual.value = "analise";
+                await carregarHistorico();
+            } else {
+                etapaAtual.value = "empresa";
+            }
+        };
 
+        const salvarEmpresa = async () => {
+            if (!usuarioAtual.value) {
+                alert("Faça login antes de cadastrar a empresa.");
+                window.location.href = "login.html";
+                return;
+            }
+            if (!empresaForm.value.razao_social) {
+                alert("Informe a razão social da empresa.");
+                return;
+            }
+            const payload = {
+                id_usuario: usuarioAtual.value.id_usuario,
+                razao_social: empresaForm.value.razao_social,
+                cnpj: empresaForm.value.cnpj,
+                cidade: empresaForm.value.cidade,
+                estado: empresaForm.value.estado,
+                grupo_tarifario: empresaForm.value.grupo_tarifario
+            };
             if (supabaseClient) {
-                const { data: faturaData, error: faturaError } = await supabaseClient
-                    .from("faturas")
-                    .insert([registroFatura])
-                    .select()
-                    .single();
-
-                if (faturaError) {
-                    console.error("Erro ao salvar fatura no Supabase:", faturaError);
-                    alert("A análise foi gerada, mas houve erro ao salvar no banco. Verifique as tabelas e permissões no Supabase.");
-                    salvarLocalmente(registroFatura, diagnostico);
+                const { data, error } = await supabaseClient.from("empresas").insert([payload]).select().single();
+                if (error) {
+                    console.error("Erro ao salvar empresa:", error);
+                    alert("Erro ao salvar empresa. Verifique RLS e tabela empresas.");
                     return;
                 }
-
-                const { error: diagnosticoError } = await supabaseClient
-                    .from("diagnosticos")
-                    .insert([{
-                        id_fatura: faturaData.id_fatura,
-                        ...diagnostico
-                    }]);
-
-                if (diagnosticoError) {
-                    console.error("Erro ao salvar diagnóstico:", diagnosticoError);
-                }
-
-                await carregarHistorico();
-                alert("Análise salva no banco de dados!");
+                empresaAtual.value = data;
             } else {
-                salvarLocalmente(registroFatura, diagnostico);
+                empresaAtual.value = { id_empresa: Date.now(), ...payload };
+            }
+            localStorage.setItem("empresaAtual", JSON.stringify(empresaAtual.value));
+            etapaAtual.value = "analise";
+            await carregarHistorico();
+            alert("Empresa cadastrada com sucesso!");
+        };
+
+        const executarAnalise = async () => {
+            if (!empresaAtual.value) {
+                alert("Cadastre uma empresa antes da análise.");
+                etapaAtual.value = "empresa";
+                return;
+            }
+            recomendacoes.value = [];
+            if (faturaForm.value.demandaContratada > faturaForm.value.demandaMedida * 1.2) {
+                recomendacoes.value.push({ tipo: "alerta", icon: "fa-scale-down", titulo: "Demanda Contratada Excessiva", descricao: "A demanda contratada está subutilizada. Recomenda-se avaliar redução contratual." });
+            }
+            if (faturaForm.value.demandaMedida > faturaForm.value.demandaContratada) {
+                recomendacoes.value.push({ tipo: "perigo", icon: "fa-triangle-exclamation", titulo: "Ultrapassagem de Demanda", descricao: "A demanda medida ultrapassou a contratada, podendo gerar cobrança adicional." });
+            }
+            if (faturaForm.value.multaReativo) {
+                recomendacoes.value.push({ tipo: "perigo", icon: "fa-bolt", titulo: "Penalidade por Excesso Reativo", descricao: "Recomenda-se estudo para correção do fator de potência." });
+            }
+            if (faturaForm.value.consumo > 1000) {
+                recomendacoes.value.push({ tipo: "sucesso", icon: "fa-solar-panel", titulo: "Potencial para Energia Solar", descricao: "O consumo informado justifica estudo de viabilidade fotovoltaica." });
+            }
+            if (faturaForm.value.valorFatura > 5000) {
+                recomendacoes.value.push({ tipo: "sucesso", icon: "fa-handshake", titulo: "Avaliar Mercado Livre", descricao: "O valor da fatura justifica análise de migração para o ACL." });
+            }
+            if (faturaForm.value.consumo > 3000 && faturaForm.value.valorFatura > 10000) {
+                recomendacoes.value.push({ tipo: "alerta", icon: "fa-battery-full", titulo: "Oportunidade para BESS", descricao: "Recomenda-se avaliar baterias para peak shaving e backup." });
+            }
+            if (recomendacoes.value.length === 0) {
+                recomendacoes.value.push({ tipo: "sucesso", icon: "fa-square-check", titulo: "Indicadores Estáveis", descricao: "Não foram detectadas inconformidades relevantes nesta análise preliminar." });
+            }
+            analiseExecutada.value = true;
+            await salvarFaturaEDiagnostico();
+            nextTick(() => renderizarGraficoDashboard());
+        };
+
+        const calcularEconomiaEstimada = () => {
+            let p = 0;
+            if (faturaForm.value.demandaContratada > faturaForm.value.demandaMedida * 1.2) p += 5;
+            if (faturaForm.value.multaReativo) p += 4;
+            if (faturaForm.value.valorFatura > 5000) p += 8;
+            if (faturaForm.value.consumo > 1000) p += 6;
+            return Number((faturaForm.value.valorFatura * (p / 100)).toFixed(2));
+        };
+
+        const salvarFaturaEDiagnostico = async () => {
+            const fatura = {
+                id_empresa: empresaAtual.value.id_empresa,
+                consumo_kwh: faturaForm.value.consumo,
+                valor_fatura: faturaForm.value.valorFatura,
+                demanda_contratada: faturaForm.value.demandaContratada,
+                demanda_medida: faturaForm.value.demandaMedida,
+                multa_reativo: faturaForm.value.multaReativo
+            };
+            const diagnostico = {
+                economia_estimada: calcularEconomiaEstimada(),
+                viavel_solar: faturaForm.value.consumo > 1000,
+                viavel_acl: faturaForm.value.valorFatura > 5000,
+                viavel_bess: faturaForm.value.consumo > 3000 && faturaForm.value.valorFatura > 10000
+            };
+            if (supabaseClient) {
+                const { data, error } = await supabaseClient.from("faturas").insert([fatura]).select().single();
+                if (error) {
+                    console.error("Erro ao salvar fatura:", error);
+                    alert("Erro ao salvar fatura. Verifique RLS e tabela faturas.");
+                    return;
+                }
+                const { error: diagError } = await supabaseClient.from("diagnosticos").insert([{ id_fatura: data.id_fatura, ...diagnostico }]);
+                if (diagError) console.error("Erro ao salvar diagnóstico:", diagError);
+                alert("Fatura e diagnóstico salvos no banco de dados!");
                 await carregarHistorico();
-                alert("Análise salva em modo local. Para usar PostgreSQL, configure as credenciais do Supabase no script.js.");
+            } else {
+                salvarHistoricoLocal(fatura);
+                alert("Fatura salva em modo local.");
             }
         };
 
-        // --- BANCO DE DADOS: CONSULTA DO HISTÓRICO ---
         const carregarHistorico = async () => {
+            if (!empresaAtual.value) return;
             if (supabaseClient) {
                 const { data, error } = await supabaseClient
                     .from("faturas")
-                    .select("*")
+                    .select(`id_fatura,id_empresa,consumo_kwh,valor_fatura,demanda_contratada,demanda_medida,multa_reativo,criado_em,empresas(razao_social)`)
+                    .eq("id_empresa", empresaAtual.value.id_empresa)
                     .order("criado_em", { ascending: false })
                     .limit(5);
-
                 if (error) {
-                    console.error("Erro ao consultar histórico:", error);
+                    console.error("Erro ao carregar histórico:", error);
                     historico.value = lerHistoricoLocal();
                     return;
                 }
-
                 historico.value = data || [];
             } else {
                 historico.value = lerHistoricoLocal();
             }
         };
 
-        // --- FALLBACK LOCAL PARA TESTES SEM SUPABASE ---
-        const salvarLocalmente = (fatura, diagnostico) => {
+        const salvarHistoricoLocal = (fatura) => {
             const registros = lerHistoricoLocal();
-
-            registros.unshift({
-                ...fatura,
-                ...diagnostico,
-                id_fatura: Date.now(),
-                criado_em: new Date().toISOString()
-            });
-
-            localStorage.setItem("historico_faturas", JSON.stringify(registros.slice(0, 5)));
+            registros.unshift({ ...fatura, id_fatura: Date.now(), criado_em: new Date().toISOString(), empresas: { razao_social: empresaAtual.value.razao_social } });
+            historico.value = registros.slice(0, 5);
+            localStorage.setItem("historico_faturas", JSON.stringify(historico.value));
         };
-
         const lerHistoricoLocal = () => {
-            try {
-                return JSON.parse(localStorage.getItem("historico_faturas")) || [];
-            } catch (e) {
-                return [];
-            }
+            try { return JSON.parse(localStorage.getItem("historico_faturas")) || []; }
+            catch { return []; }
         };
 
-        const calcularEconomiaEstimada = () => {
-            let percentual = 0;
-
-            if (form.value.demandaContratada > (form.value.demandaMedida * 1.2)) percentual += 5;
-            if (form.value.multaReativo) percentual += 4;
-            if (form.value.valorFatura > 5000) percentual += 8;
-            if (form.value.consumo > 1000) percentual += 6;
-
-            return Number((form.value.valorFatura * (percentual / 100)).toFixed(2));
-        };
-
-        // --- GRÁFICO CHART.JS ---
         const renderizarGraficoDashboard = () => {
-            const canvas = document.getElementById('chartAnalise');
+            const canvas = document.getElementById("chartAnalise");
             if (!canvas) return;
-
-            const ctx = canvas.getContext('2d');
-
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-
-            const corDemandaMedida =
-                form.value.demandaMedida > form.value.demandaContratada
-                    ? '#DC3545'
-                    : '#198754';
-
+            const ctx = canvas.getContext("2d");
+            if (chartInstance) chartInstance.destroy();
+            const cor = faturaForm.value.demandaMedida > faturaForm.value.demandaContratada ? "#DC3545" : "#198754";
             chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Contratada (kW)', 'Medida Real (kW)'],
-                    datasets: [{
-                        label: 'Demanda da Planta',
-                        data: [form.value.demandaContratada, form.value.demandaMedida],
-                        backgroundColor: ['#0F3B66', corDemandaMedida],
-                        borderRadius: 6,
-                        barPercentage: 0.6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#F1F5F9' },
-                            ticks: { font: { family: 'Roboto' } }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { family: 'Montserrat', weight: '500' } }
-                        }
-                    }
-                }
+                type: "bar",
+                data: { labels: ["Contratada (kW)", "Medida Real (kW)"], datasets: [{ data: [faturaForm.value.demandaContratada, faturaForm.value.demandaMedida], backgroundColor: ["#0F3B66", cor], borderRadius: 6, barPercentage: 0.6 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
             });
         };
 
-        const imprimirResultado = () => {
-            window.print();
-        };
+        const imprimirResultado = () => window.print();
+        const enviarContato = () => alert("Dados validados. Em uma versão futura, este formulário será integrado à API.");
+        const formatarData = (data) => data ? new Date(data).toLocaleDateString("pt-BR") : "-";
 
-        const enviarContato = () => {
-            alert('Dados validados. Em uma versão futura, este formulário será integrado à API de atendimento.');
-        };
-
-        const formatarData = (dataIso) => {
-            if (!dataIso) return "-";
-            return new Date(dataIso).toLocaleDateString("pt-BR");
-        };
-
-        onMounted(() => {
-            carregarHistorico();
-        });
+        onMounted(() => definirEtapaInicial());
 
         return {
-            mobileMenuOpen,
-            analiseExecutada,
-            usuarioLogado,
-            bancoConectado,
-            statusBanco,
-            form,
-            recomendacoes,
-            historico,
-            toggleMobileMenu,
-            closeMenu,
-            logout,
-            calcularFatorCarga,
-            executarAnalise,
-            salvarAnalise,
-            carregarHistorico,
-            imprimirResultado,
-            enviarContato,
-            formatarData
+            mobileMenuOpen, usuarioLogado, bancoConectado, statusBanco, etapaAtual,
+            usuarioAtual, empresaAtual, usuarioForm, empresaForm, faturaForm,
+            analiseExecutada, recomendacoes, historico, toggleMobileMenu, closeMenu,
+            logout, salvarEmpresa, executarAnalise, calcularFatorCarga, carregarHistorico,
+            imprimirResultado, enviarContato, formatarData
         };
     }
-}).mount('#app');
+}).mount("#app");
