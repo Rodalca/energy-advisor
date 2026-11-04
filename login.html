@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -9,67 +10,91 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+
 <header class="main-header">
     <div class="container header-container">
         <a href="index.html" class="logo">
-            <div class="logo-icon"><i class="fa-solid fa-chart-network"></i></div>
+            <div class="logo-icon">
+                <i class="fa-solid fa-chart-network"></i>
+            </div>
             <span>Energy</span>Advisor
         </a>
     </div>
 </header>
+
 <section class="hero-section">
     <div class="container">
         <div class="card-wrapper login-card">
             <h2>Área Restrita</h2>
-            <p>Entre com um usuário cadastrado na tabela <strong>usuarios</strong> do Supabase.</p>
+            <p>Entre com seu usuário cadastrado no Energy Advisor.</p>
+
             <form id="loginForm" class="premium-form login-form">
                 <div class="form-group">
                     <label for="email">E-mail</label>
-                    <input type="email" id="email" required placeholder="usuario@email.com">
+                    <input type="email" id="email" required
+                           placeholder="usuario@email.com">
                 </div>
+
                 <div class="form-group">
                     <label for="senha">Senha</label>
-                    <input type="password" id="senha" required placeholder="Digite sua senha">
+                    <input type="password" id="senha" required
+                           placeholder="Digite sua senha">
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Entrar
+                </button>
             </form>
-            <p class="login-observacao">O sistema procura o e-mail e a senha no banco e, se encontrar, carrega o nome no cabeçalho.</p>
+
+            <p class="login-observacao">
+                A autenticação é realizada pelo Supabase Auth.
+            </p>
         </div>
     </div>
 </section>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 const SUPABASE_URL = "https://qbfosnuwrqbjwbolmopj.supabase.co";
 const SUPABASE_KEY = "sb_publishable_w76Z2U0x9epJ4XsxkQGQdg_lbAVlmHx";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-document.getElementById("loginForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-    const email = document.getElementById("email").value.trim();
-    const senha = document.getElementById("senha").value.trim();
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
-    const { data, error } = await supabaseClient
-        .from("usuarios")
-        .select("id_usuario, nome, email")
-        .eq("email", email)
-        .eq("senha", senha)
-        .maybeSingle();
+document.getElementById("loginForm").addEventListener(
+    "submit",
+    async function(e) {
+        e.preventDefault();
 
-    if (error) {
-        console.error("Erro no login:", error);
-        alert("Erro ao consultar o banco de dados.");
-        return;
+        const email = document.getElementById("email").value.trim();
+        const senha = document.getElementById("senha").value;
+
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: senha
+            });
+
+        if (error || !data?.user) {
+            console.error("Falha na autenticação:", error);
+            alert("E-mail ou senha incorretos.");
+            return;
+        }
+
+        // Remove indicadores antigos de autenticação.
+        localStorage.removeItem("logado");
+        localStorage.removeItem("usuarioAtual");
+        localStorage.removeItem("empresaAtual");
+
+        // O Supabase Auth gerencia a sessão.
+        window.location.href = "index.html";
     }
-    if (!data) {
-        alert("Usuário não encontrado ou senha incorreta.");
-        return;
-    }
-
-    localStorage.setItem("logado", "true");
-    localStorage.setItem("usuarioAtual", JSON.stringify(data));
-    localStorage.removeItem("empresaAtual");
-    window.location.href = "index.html";
-});
+);
 </script>
+
 </body>
 </html>
+
